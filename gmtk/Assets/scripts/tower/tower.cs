@@ -1,10 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public enum towerType
-{
-    gun,arher,furnace
-}
 public class tower : MonoBehaviour
 {
     [SerializeField] protected float attackCool;
@@ -12,9 +8,18 @@ public class tower : MonoBehaviour
     [SerializeField] protected int attackPower;
     [SerializeField] protected LayerMask enemyLayer;
     [SerializeField] protected Rigidbody2D rb;
-    private bool isDrag;
+    [SerializeField] protected Animator anim;
+    [SerializeField] protected towerAnimControl animControl;
+    protected bool isDrag;
     private Vector3 screenPoint;
     private Vector3 offset;
+    protected bool isBuildEnd;
+    protected virtual void Awake()
+    {
+        animControl.towerAttack += attackKeyFps;
+        animControl.towerAttackEnd += attackEnd;
+        animControl.towerBuild += buildEnd;
+    }
     protected virtual void Start()
     {
         attackTimer = 0;
@@ -23,9 +28,11 @@ public class tower : MonoBehaviour
     {
         attackTimer += Time.deltaTime;
     }
-    protected virtual void attack()
+    protected virtual void OnDestroy()
     {
-        
+        animControl.towerAttack -= attackKeyFps;
+        animControl.towerAttackEnd -= attackEnd;
+        animControl.towerBuild -= buildEnd;
     }
     private void OnMouseDown()
     {
@@ -33,8 +40,10 @@ public class tower : MonoBehaviour
         offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
         isDrag = true;
     }
-    private void OnMouseDrag()
+    protected virtual void OnMouseDrag()
     {
+        if (!isBuildEnd)
+            return;
         Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
         Vector3 targetPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
         rb.MovePosition(Vector3.Lerp(transform.position, targetPosition, 100 * Time.deltaTime));
@@ -43,17 +52,16 @@ public class tower : MonoBehaviour
     {
         isDrag = false;
         normalizePos();
-        globalManager.instance.calculateRoute();
     }
-    private void normalizePos()
+    protected virtual void normalizePos()
     {
         int posX = Mathf.RoundToInt(transform.position.x);
         int posY = Mathf.RoundToInt(transform.position.y);
         transform.position = new Vector3(posX, posY);
     }
-    private void OnCollisionStay(Collision collision)
+    protected virtual void OnCollisionStay(Collision collision)
     {
-        if (!isDrag) return;
+        if (!isDrag||!isBuildEnd) return;
         if (collision.gameObject.tag == "tower")
         {
             Rigidbody2D otherRb = collision.gameObject.GetComponent<Rigidbody2D>();
@@ -70,7 +78,19 @@ public class tower : MonoBehaviour
         {
             rb.velocity = Vector3.zero;
             normalizePos();
-            globalManager.instance.calculateRoute();
         }
+    }
+    public virtual void buildEnd()
+    {
+        anim.SetBool("buildEnd", true);
+        isBuildEnd = true;
+    }
+    public void attackEnd()
+    {
+        anim.SetBool("isAttack", false);
+    }
+    public virtual void attackKeyFps()
+    {
+
     }
 }

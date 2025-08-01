@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class furnaceTower : tower
 {
-    [SerializeField] private int attackDistance;
+    [SerializeField] private float attackDistance;
     private List<Transform> attackTargets;
     protected override void Start()
     {
@@ -11,6 +11,8 @@ public class furnaceTower : tower
     }
     protected override void Update()
     {
+        if (!isBuildEnd)
+            return;
         base.Update();
         enemyDetect();
         if(attackTargets.Count > 0 )
@@ -18,9 +20,21 @@ public class furnaceTower : tower
             attack();
         }
     }
-    protected override void attack()
+    private void attack()
     {
-        base.attack();
+        if (attackTimer < attackCool)
+        {
+            return;
+        }
+        attackTimer = 0;
+        anim.SetBool("isAttack", true);
+    }
+    public override void attackKeyFps()
+    {
+        foreach(var item in attackTargets)
+        {
+            item.GetComponent<enemy>().hurt(attackPower);
+        }
     }
     private void enemyDetect()
     {

@@ -4,21 +4,44 @@ using UnityEngine;
 public class gunTower : tower
 {
     [SerializeField] private int attackDistance;
-    [SerializeField] private GameObject shellPrefab;
+    [SerializeField] private shell shellPrefab;
+    [SerializeField] private Transform muzzle;
+    [SerializeField] private Transform shellBornPos;
+    private Transform attackTarget;
     protected override void Start()
     {
         base.Start();
     }
     protected override void Update()
     {
+
+        if (!isBuildEnd)
+            return;
         base.Update();
-        Transform attackTarget = closestEnemyDetect();
-        if (attackTarget != null)
+        if (closestEnemyDetect() != null)//放置炮台被瞬间挤出范围导致丢失打到一半丢失目标
+        {
+            attackTarget = closestEnemyDetect();
+            Vector2 direction = attackTarget.position - transform.position;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            angle += 90;
+            Quaternion targetRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            muzzle.transform.rotation = Quaternion.Slerp(muzzle.transform.rotation, targetRotation, 10 * Time.deltaTime);
             attack();
+        }
     }
-    protected override void attack()
+    private void attack()
     {
-        
+        if (attackTimer < attackCool)
+        {
+            return;
+        }
+        attackTimer = 0;
+        anim.SetBool("isAttack", true);
+    }
+    public override void attackKeyFps()
+    {
+        shell newShell = Instantiate(shellPrefab, shellBornPos.transform.position, Quaternion.identity);
+        newShell.setTargetEnemy(attackTarget);
     }
     private Transform closestEnemyDetect()
     {

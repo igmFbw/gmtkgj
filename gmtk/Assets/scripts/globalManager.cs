@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 public class globalManager : MonoBehaviour
 {
-    [SerializeField] private AstarPath astarPath;
     public int coin;
+    public bool isBuilding;
+    [SerializeField] private List<int> enemyList;
     private static globalManager _instance;
     public static globalManager instance
     {
@@ -28,15 +29,15 @@ public class globalManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    private void Start()
+    {
+        
+    }
     private void OnDestroy()
     {
         if (_instance == this)
         {
             _instance = null;
         }
-    }
-    public void calculateRoute()
-    {
-        astarPath.Scan();
     }
 }
