@@ -369,7 +369,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackRange: {fileID: 3696257819293964699}
   attackCool: 0.7
-  attackPower: 30
+  attackPower: 40
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8

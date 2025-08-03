@@ -11,6 +11,7 @@ public class track : MonoBehaviour
         isOccupied = true;
         tower = newTower;
         col.enabled = false;
+        StartCoroutine(check());
     }
     public void destroyTower()
     {
@@ -21,5 +22,11 @@ public class track : MonoBehaviour
     {
         isOccupied = false;
         col.enabled = true;
+    }
+    private IEnumerator check()
+    {
+        yield return new WaitForSeconds(.5f);
+        if(isOccupied )
+            col.enabled = false;
     }
 }

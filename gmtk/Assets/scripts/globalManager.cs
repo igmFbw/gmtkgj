@@ -15,6 +15,7 @@ public class globalManager : MonoBehaviour
     [SerializeField] private int levelIndex;
     [SerializeField] private Text coinText;
     [SerializeField] private AudioSource coinAudio;
+    [SerializeField] private AudioSource mouseAudio;
     [SerializeField] private GameObject winUI;
     [SerializeField] private GameObject loseUI;
     [SerializeField] private List<float> enemyBornTime;
@@ -33,6 +34,13 @@ public class globalManager : MonoBehaviour
                 _instance = FindObjectOfType<globalManager>();
             }
             return _instance;
+        }
+    }
+    private void Update()
+    {
+        if (Input.GetMouseButtonUp(0))
+        {
+            mouseAudio.Play();
         }
     }
     private void Awake()

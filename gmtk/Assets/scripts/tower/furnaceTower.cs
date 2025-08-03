@@ -4,6 +4,7 @@ using UnityEngine;
 public class furnaceTower : tower
 {
     [SerializeField] private float attackDistance;
+    [SerializeField] private GameObject furnaceCircle;
     private List<Transform> attackTargets;
     public bool isSingle;
     public bool hance;
@@ -32,6 +33,7 @@ public class furnaceTower : tower
         attackTimer = 0;
         anim.SetBool("isAttack", true);
         audioPlayer.Play();
+        Instantiate(furnaceCircle, transform.position, Quaternion.identity);
     }
     public override void attackKeyFps()
     {

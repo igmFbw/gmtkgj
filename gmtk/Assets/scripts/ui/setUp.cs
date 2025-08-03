@@ -32,4 +32,12 @@ public class setUp : MonoBehaviour
     {
         audioMixer.SetFloat("bgm", Mathf.Log10(musicSlider.value) * 25);
     }
+    public void stopGame()
+    {
+        Time.timeScale = 0;
+    }
+    public void continueGame()
+    {
+        Time.timeScale = 1;
+    }
 }

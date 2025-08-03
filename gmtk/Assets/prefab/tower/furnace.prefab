@@ -285,7 +285,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackRange: {fileID: 5658262974544402979}
   attackCool: 1
-  attackPower: 10
+  attackPower: 20
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -300,6 +300,7 @@ MonoBehaviour:
   buildClip: {fileID: 8300000, guid: def397f8fce00d144a74874a5db12d50, type: 3}
   type: 1
   attackDistance: 2.21
+  furnaceCircle: {fileID: 2747952052603888123, guid: 3a205036a5cdc004a84d93f9610374e1, type: 3}
   isSingle: 0
   hance: 0
 --- !u!82 &8837472296800510701

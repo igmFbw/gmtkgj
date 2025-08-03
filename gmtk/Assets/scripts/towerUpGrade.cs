@@ -9,6 +9,7 @@ public class towerUpGrade : MonoBehaviour,IPointerClickHandler
     [SerializeField] private List<upGradeSlot> gradeSlotList;
     [SerializeField] private GameObject upGradeChooseUI;
     [SerializeField] private AudioSource audioPlayer;
+    [SerializeField] private Animator anim;
     private int blueProbability;
     private int purpleProbability;
     private int goldenProbability;
@@ -106,6 +107,7 @@ public class towerUpGrade : MonoBehaviour,IPointerClickHandler
     private void openChooseUI()
     {
         upGradeChooseUI.SetActive(true);
+        anim.SetBool("isPlay",true);
         Time.timeScale = 0;
         if (type == 1)
         {
@@ -270,12 +272,12 @@ public class towerUpGrade : MonoBehaviour,IPointerClickHandler
         count++;
         globalManager.instance.costCoin(cost);
         Time.timeScale = 1;
+        cost = 100 + count * 100;
+        costText.text = cost.ToString() + "G";
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        cost = 100 + count * 100;
-        costText.text = cost.ToString() + "G";
         if (globalManager.instance.coin < cost)
         {
             globalManager.instance.setTip("You don't have enough coins");
@@ -283,5 +285,9 @@ public class towerUpGrade : MonoBehaviour,IPointerClickHandler
         }
         randomEffect();
         openChooseUI();
+    }
+    public void playEnd()
+    {
+        anim.SetBool("isPlay",false);
     }
 }
