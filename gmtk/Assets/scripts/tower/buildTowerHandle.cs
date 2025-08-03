@@ -25,7 +25,12 @@ public class buildTowerHandle : MonoBehaviour
             if(hit)
             {
                 buildTower(hit.transform);
+                globalManager.instance.costCoin(cost);
                 Destroy(gameObject);
+            }
+            else
+            {
+                globalManager.instance.setTip("Please place the defense tower on the track");
             }
         }
         if(Input.GetMouseButtonDown(1))
@@ -37,12 +42,20 @@ public class buildTowerHandle : MonoBehaviour
     {
         track buildTrack = buildPos.GetComponent<track>();
         if (buildTrack.isOccupied)
+        {
+            globalManager.instance.setTip("There is already a defense tower at this location");
             return;
+        }
         GameObject newTower = Instantiate(towerToBuild, buildPos.position,Quaternion.identity);
         buildTrack.addTower(newTower);
+        newTower.GetComponent<tower>().setPos(buildTrack);
     }
     private bool isClickUI()
     {
         return UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
+    }
+    private void OnDestroy()
+    {
+        globalManager.instance.isBuilding = false;
     }
 }

@@ -7,10 +7,16 @@ public class gunTower : tower
     [SerializeField] private shell shellPrefab;
     [SerializeField] private Transform muzzle;
     [SerializeField] private Transform shellBornPos;
+    [HideInInspector] public bool isOverLoad;
+    [HideInInspector] public bool isCold;
+    [HideInInspector] public bool isBlast;
+    [HideInInspector] public bool isMortar;
+    private int overLoadCount;
     private Transform attackTarget;
     protected override void Start()
     {
         base.Start();
+        mapManager.instance.addGunTower(this);
     }
     protected override void Update()
     {
@@ -40,8 +46,18 @@ public class gunTower : tower
     }
     public override void attackKeyFps()
     {
+        if (attackTarget == null)
+            return;
+        audioPlayer.Play();
         shell newShell = Instantiate(shellPrefab, shellBornPos.transform.position, Quaternion.identity);
-        newShell.setTargetEnemy(attackTarget);
+        newShell.setTargetEnemy(attackTarget,attackPower);
+        newShell.setSkill(isCold, isMortar, isBlast);
+        if(isOverLoad)
+        {
+            if (overLoadCount >= 10)
+                return;
+            attackPower += attackPower * 0.01f;
+        }
     }
     private Transform closestEnemyDetect()
     {

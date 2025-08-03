@@ -5,9 +5,12 @@ public class furnaceTower : tower
 {
     [SerializeField] private float attackDistance;
     private List<Transform> attackTargets;
+    public bool isSingle;
+    public bool hance;
     protected override void Start()
     {
         base.Start();
+        mapManager.instance.addFurnaceTower(this);
     }
     protected override void Update()
     {
@@ -28,12 +31,18 @@ public class furnaceTower : tower
         }
         attackTimer = 0;
         anim.SetBool("isAttack", true);
+        audioPlayer.Play();
     }
     public override void attackKeyFps()
     {
+        float damage = attackPower;
+        if (hance)
+            damage += damage * .2f;
+        if (attackTargets.Count == 1)
+            damage += damage * .5f;
         foreach(var item in attackTargets)
         {
-            item.GetComponent<enemy>().hurt(attackPower);
+            item.GetComponent<enemy>().hurt(Mathf.RoundToInt(damage));
         }
     }
     private void enemyDetect()

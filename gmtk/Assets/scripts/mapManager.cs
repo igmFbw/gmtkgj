@@ -4,7 +4,13 @@ using UnityEngine;
 public class mapManager : MonoBehaviour
 {
     public heartTower heart;
-    private int[,] map;
+    public Transform coinMovePos;
+    public List<gunTower> gunTowerList;
+    public List<furnaceTower> furnaceTowerList;
+    public List<archerTower> archerTowerList;
+    public bool gunTowerAttackCool;
+    public bool furnaceTowerAttackCool;
+    public bool archerTowerAttackCool;
     private static mapManager _instance;
     public static mapManager instance
     {
@@ -27,7 +33,6 @@ public class mapManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        map = new int[18, 10];
     }
     private void OnDestroy()
     {
@@ -36,5 +41,16 @@ public class mapManager : MonoBehaviour
             _instance = null;
         }
     }
-    
+    public void addGunTower(gunTower newTower)
+    {
+        gunTowerList.Add(newTower);
+    }
+    public void addArcherTower(archerTower newTower)
+    {
+        archerTowerList.Add(newTower);
+    }
+    public void addFurnaceTower(furnaceTower newTower)
+    {
+        furnaceTowerList.Add(newTower);
+    }
 }

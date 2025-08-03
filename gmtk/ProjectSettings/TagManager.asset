@@ -17,7 +17,7 @@ TagManager:
   - tower
   - track
   - heart
-  - 
+  - airWall
   - 
   - 
   - 
@@ -43,4 +43,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: enemy
+    uniqueID: 1214904497
+    locked: 0
+  - name: heart
+    uniqueID: 234445001
     locked: 0

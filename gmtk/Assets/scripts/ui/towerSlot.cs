@@ -11,6 +11,11 @@ public class towerSlot : MonoBehaviour, IPointerClickHandler
     {
         if (globalManager.instance.isBuilding)
             return;
+        if (globalManager.instance.coin < cost)
+        {
+            globalManager.instance.setTip("You don't have enough coins");
+            return;
+        }
         globalManager.instance.isBuilding = true;
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0;

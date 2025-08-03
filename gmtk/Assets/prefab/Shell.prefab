@@ -99,6 +99,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97bd1117ef5ed7d41864625cfed212c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  emissionPrefab: {fileID: 6943261531798702117, guid: b1ce17bafde57874eb8503945fecd392, type: 3}
+  emissionDistance: 0.7
 --- !u!50 &5889600866321604290
 Rigidbody2D:
   serializedVersion: 4

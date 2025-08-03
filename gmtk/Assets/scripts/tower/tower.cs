@@ -1,19 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+public enum towerType
+{
+    archer,furnace,gun
+}
 public class tower : MonoBehaviour
 {
+    [SerializeField] private GameObject attackRange;
     [SerializeField] protected float attackCool;
     protected float attackTimer;
-    [SerializeField] protected int attackPower;
+    [SerializeField] protected float attackPower;
     [SerializeField] protected LayerMask enemyLayer;
     [SerializeField] protected Rigidbody2D rb;
     [SerializeField] protected Animator anim;
     [SerializeField] protected towerAnimControl animControl;
+    [SerializeField] protected LayerMask trackLayer;
+    [SerializeField] protected AudioSource audioPlayer;
+    [SerializeField] protected AudioClip attackClip;
+    [SerializeField] protected AudioClip buildClip;
+    public towerType type;
     protected bool isDrag;
     private Vector3 screenPoint;
     private Vector3 offset;
     protected bool isBuildEnd;
+    private track towerPos;
     protected virtual void Awake()
     {
         animControl.towerAttack += attackKeyFps;
@@ -23,6 +34,8 @@ public class tower : MonoBehaviour
     protected virtual void Start()
     {
         attackTimer = 0;
+        audioPlayer.clip = buildClip;
+        audioPlayer.Play();
     }
     protected virtual void Update()
     {
@@ -46,8 +59,7 @@ public class tower : MonoBehaviour
             return;
         Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
         Vector3 targetPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
-        rb.MovePosition(Vector3.Lerp(transform.position, targetPosition, 100 * Time.deltaTime));
-    }
+        rb.MovePosition(Vector3.Lerp(transform.position, targetPosition, 100 * Time.deltaTime));    }
     private void OnMouseUp()
     {
         isDrag = false;
@@ -55,9 +67,18 @@ public class tower : MonoBehaviour
     }
     protected virtual void normalizePos()
     {
+        towerPos.removeTower();
         int posX = Mathf.RoundToInt(transform.position.x);
         int posY = Mathf.RoundToInt(transform.position.y);
         transform.position = new Vector3(posX, posY);
+        Vector3 dir = new Vector3(posX,posY, 0);
+        RaycastHit2D hit = Physics2D.Raycast(dir, Vector2.zero, Mathf.Infinity, trackLayer);
+        if (hit)
+        {
+            track newTrack = hit.transform.GetComponent<track>();
+            newTrack.addTower(gameObject);
+            towerPos = newTrack;
+        }
     }
     protected virtual void OnCollisionStay(Collision collision)
     {
@@ -84,6 +105,8 @@ public class tower : MonoBehaviour
     {
         anim.SetBool("buildEnd", true);
         isBuildEnd = true;
+        audioPlayer.Stop();
+        audioPlayer.clip = attackClip;
     }
     public void attackEnd()
     {
@@ -92,5 +115,35 @@ public class tower : MonoBehaviour
     public virtual void attackKeyFps()
     {
 
+    }
+    public void setPos(track pos)
+    {
+        towerPos = pos;
+    }
+    public void addAttackPower(int value)
+    {
+        attackPower += value;
+    }
+    public void addVelocity(float value)
+    {
+        attackCool -= value;
+        if(attackCool <= 0.35f)
+        {
+            attackCool = 0.35f;
+            if (type == towerType.archer)
+                mapManager.instance.archerTowerAttackCool = true;
+            else if (type == towerType.gun)
+                mapManager.instance.gunTowerAttackCool = true;
+            else 
+                mapManager.instance.furnaceTowerAttackCool = true;
+        }
+    }
+    private void OnMouseEnter()
+    {
+        attackRange.SetActive(true);
+    }
+    private void OnMouseExit()
+    {
+        attackRange.SetActive(false);
     }
 }

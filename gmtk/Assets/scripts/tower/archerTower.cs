@@ -8,11 +8,15 @@ public class archerTower : tower
     private Vector2 attackDir;
     private Quaternion targetAngle;
     [SerializeField] private float attackDistance;
+    public bool isPenetrate;
+    public bool isCold;
+    public bool isDivision;
     protected override void Start()
     {
         base.Start();
         attackDir = mapManager.instance.heart.transform.position - transform.position;
         attackDir = attackDir.normalized;
+        mapManager.instance.addArcherTower(this);
     }
     protected override void Update()
     {
@@ -42,8 +46,19 @@ public class archerTower : tower
     }
     public override void attackKeyFps()
     {
+        audioPlayer.Play();
         archer newArcher = Instantiate(archerPrefab, transform.position, Quaternion.identity);
-        newArcher.setTargetEnemy(attackDir, targetAngle);
+        newArcher.setTargetEnemy(attackDir, targetAngle,attackPower);
+        newArcher.setSkill(isCold, isPenetrate);
+        if (isDivision)
+        {
+            archer archerD1 = Instantiate(archerPrefab, transform.position, Quaternion.identity);
+            archerD1.setTargetEnemy(calculateDivisionDir(30), calculateDivisionAngle(30), attackPower * .25f);
+            archerD1.setSkill(isCold, isPenetrate);
+            archer archerD2 = Instantiate(archerPrefab, transform.position, Quaternion.identity);
+            archerD2.setTargetEnemy(calculateDivisionDir(-30), calculateDivisionAngle(-30), attackPower * .25f);
+            archerD2.setSkill(isCold, isPenetrate);
+        }
     }
     public override void buildEnd()
     {
@@ -57,6 +72,18 @@ public class archerTower : tower
         angle += 90;
         targetAngle = Quaternion.AngleAxis(angle, Vector3.forward);
         rotateBow(isLerp);
+    }
+    public Quaternion calculateDivisionAngle(int num)
+    {
+        float angle = Mathf.Atan2(attackDir.y, attackDir.x) * Mathf.Rad2Deg;
+        angle += 90;
+        angle += num;
+        return Quaternion.AngleAxis(angle, Vector3.forward);
+    }
+    public Vector3 calculateDivisionDir(int num)
+    {
+        Vector3 newDir = attackDir.normalized;
+        return Quaternion.Euler(0, 0, num) * newDir;
     }
     private void rotateBow(bool isLerp)
     {
